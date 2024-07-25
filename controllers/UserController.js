@@ -135,7 +135,35 @@ const getUserProfile = async (req, res) => {
   }
 };
 
+//logout user
+const logoutController = async (req, res) => {
+  try {
+    res
+      .status(200)
+      .cookie("token", "", {
+        expires: new Date(Date.now()),
+        secure: process.env.NODE_ENV === "development" ? true : false,
+        httpOnly: process.env.NODE_ENV === "development" ? true : false,
+        sameSite: process.env.NODE_ENV === "development" ? true : false,
+      })
+      .send({
+        success: true,
+        message: "Logout SUccessfully",
+      });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error In LOgout API",
+      error,
+    });
+  }
+}
 
 
 
-module.exports = { registerController, loginController, getUserProfile };
+
+
+
+
+module.exports = { registerController, loginController, getUserProfile, logoutController };
