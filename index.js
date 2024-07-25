@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 const { connectDB } = require('./config/db');
 
+const userRoutes = require('./routers/UserRoutes');
 // Load environment variables from .env file
 dotenv.config();
 
@@ -18,9 +19,8 @@ app.use(express.json());
 
 
 // Routes
-app.get('/test', (req, res) => {
-  res.send('Hello World !!');
-});
+app.use('/api/v1', userRoutes);
+
 
 // Start server
 const PORT = process.env.PORT || 3000;
