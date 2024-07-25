@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
 const { connectDB } = require('./config/db');
 
 const userRoutes = require('./routers/UserRoutes');
@@ -14,6 +15,7 @@ connectDB()
 // Middleware
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(cookieParser());
 
 
 

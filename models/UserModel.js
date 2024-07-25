@@ -68,7 +68,7 @@ userSchema.methods.comparePassword = async function (plainPassword) {
 
 // //JWT TOKEN
 userSchema.methods.generateToken = function () {
-  return JWT.sign({ _id: this._id }, process.env.JWT_SECRET, {
+  return jwt.sign({ _id: this._id }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
 };
