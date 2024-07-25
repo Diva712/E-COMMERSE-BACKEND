@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -53,15 +54,15 @@ const userSchema = new mongoose.Schema(
 
 // //fuynctuions
 // // hash func
-// userSchema.pre("save", async function (next) {
-//   if (!this.isModified("password")) return next();
-//   this.password = await bcrypt.hash(this.password, 10);
-// });
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+});
 
 // // compare function
-// userSchema.methods.comparePassword = async function (plainPassword) {
-//   return await bcrypt.compare(plainPassword, this.password);
-// };
+userSchema.methods.comparePassword = async function (plainPassword) {
+  return await bcrypt.compare(plainPassword, this.password);
+};
 
 // //JWT TOKEN
 // userSchema.methods.generateToken = function () {
