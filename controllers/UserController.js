@@ -23,6 +23,7 @@ const registerController = async (req, res) => {
         message: "Please Provide All Fields",
       });
     }
+
     //check exisiting user
     const exisitingUSer = await userModel.findOne({ email });
     //validation
@@ -114,4 +115,27 @@ const loginController = async (req, res) => {
   }
 }
 
-module.exports = { registerController, loginController };
+//get profile
+const getUserProfileController = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user._id);
+    user.password = undefined;
+    res.status(200).send({
+      success: true,
+      message: "User Prfolie Fetched Successfully",
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error In PRofile API",
+      error,
+    });
+  }
+};
+
+
+
+
+module.exports = { registerController, loginController, getUserProfile };
