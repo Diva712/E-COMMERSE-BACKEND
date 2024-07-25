@@ -116,7 +116,7 @@ const loginController = async (req, res) => {
 }
 
 //get profile
-const getUserProfileController = async (req, res) => {
+const getUserProfile = async (req, res) => {
   try {
     const user = await userModel.findById(req.user._id);
     user.password = undefined;
