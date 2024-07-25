@@ -2,9 +2,13 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const { connectDB } = require('./config/db');
 
 // Load environment variables from .env file
 dotenv.config();
+
+//DB Connection
+connectDB()
 
 // Middleware
 app.use(morgan('dev'));
