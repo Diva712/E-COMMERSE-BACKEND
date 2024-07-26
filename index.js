@@ -7,6 +7,7 @@ const { connectDB } = require('./config/db');
 const cloudinary = require('cloudinary');
 
 const userRoutes = require('./routers/UserRoutes');
+const productRoutes = require('./routers/ProductRoutes');
 // Load environment variables from .env file
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/products', productRoutes);
 
 
 // Start server
