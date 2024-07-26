@@ -1,6 +1,6 @@
 const categoryModel = require('../models/CategoryModel');
-
-
+const productModel = require('../models/ProductModel');
+//create category
 const createCategory = async (req, res) => {
   try {
     const { category } = req.body;
@@ -26,7 +26,7 @@ const createCategory = async (req, res) => {
   }
 }
 
-
+//get all category
 const getAllCategory = async (req, res) => {
   try {
     const categories = await categoryModel.find({});
@@ -45,8 +45,52 @@ const getAllCategory = async (req, res) => {
   }
 }
 
+//delete category
+const deleteCategory = async (req, res) => {
+  try {
+    // find category
+    const category = await categoryModel.findById(req.params.id);
+    //validation
+    if (!category) {
+      return res.status(404).send({
+        success: false,
+        message: "Category not found",
+      });
+    }
+    // find product with this category id
+    const products = await productModel.find({ category: category._id });
+    // update producty category
+    for (let i = 0; i < products.length; i++) {
+      const product = products[i];
+      product.category = undefined;
+      await product.save();
+    }
+    // save
+    await category.deleteOne();
+    res.status(200).send({
+      success: true,
+      message: "Catgeory Deleted Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    // cast error ||  OBJECT ID
+    if (error.name === "CastError") {
+      return res.status(500).send({
+        success: false,
+        message: "Invalid Id",
+      });
+    }
+    res.status(500).send({
+      success: false,
+      message: "Error In DELETE CAT API",
+      error,
+    });
+  }
+}
+
 module.exports = {
   createCategory,
-  getAllCategory
+  getAllCategory,
+  deleteCategory
 
 };
