@@ -1,13 +1,13 @@
 const express = require('express');
-const { getAllProduct, getSingleProduct, creareProduct, updateProduct, updateProductImage } = require('../controllers/ProductController');
+const { getAllProduct, getSingleProduct, creareProduct, updateProduct, updateProductImage, deleteProductImage } = require('../controllers/ProductController');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/AuthMiddleware');
 const singleUpload = require('../middleware/MulterMiddleware');
 router.route('/get-all').get(getAllProduct);
-router.route('/:id').get(isAuthenticated, getSingleProduct).put(updateProduct)
-router.route('/image/:id').put(singleUpload, updateProductImage);
+router.route('/:id').get(getSingleProduct).put(isAuthenticated, updateProduct)
+router.route('/update-image/:id').put(isAuthenticated, singleUpload, updateProductImage);
 router.route('/create').post(isAuthenticated, singleUpload, creareProduct);
-
+router.route('/delete-image/:id').delete(deleteProductImage);
 
 
 module.exports = router;

@@ -109,7 +109,7 @@ const creareProduct = async (req, res) => {
   }
 }
 
-
+//update product
 const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -148,6 +148,7 @@ const updateProduct = async (req, res) => {
   }
 };
 
+//update image
 const updateProductImage = async (req, res) => {
   try {
     const product = await ProductModel.findById(req.params.id);
@@ -202,10 +203,67 @@ const updateProductImage = async (req, res) => {
 }
 
 
+const deleteProductImage = async (req, res) => {
+  try {
+
+    const product = await ProductModel.findById(req.params.id);
+    if (!product) {
+      return res.status(500).send({
+        success: false,
+        message: "Product not found!!"
+      })
+    }
+    //image id 
+    const id = req.query.id;
+    if (!id) {
+      return res.status(404).send({
+        success: false,
+        message: "product image not found !"
+      })
+    }
+
+    let isExist = -1;
+    product.images.forEach((item, index) => {
+      if (item._id.toString() === id.toString()) isExist = index;
+    });
+    if (isExist < 0) {
+      return res.status(404).send({
+        success: false,
+        message: "Image Not Found",
+      });
+    }
+    // Delete product image
+    await cloudinary.v2.uploader.destroy(product.images[isExist].public_id);
+    product.images.splice(isExist, 1);
+    await product.save();
+    return res.status(200).send({
+      success: true,
+      message: "Product Image Deleted Successfully",
+    });
+
+
+  } catch (error) {
+    console.error(error);
+    if (error.name === "CastError") {
+      return res.status(400).send({
+        success: false,
+        message: "Invalid product ID",
+      });
+    }
+    res.status(500).send({
+      success: false,
+      message: 'Error in update product API',
+      error: error.message,
+    });
+  }
+}
+
+
 module.exports = {
   getAllProduct,
   getSingleProduct,
   creareProduct,
   updateProduct,
-  updateProductImage
+  updateProductImage,
+  deleteProductImage
 };
