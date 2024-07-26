@@ -1,5 +1,6 @@
 const userModel = require('../models/UserModel')
-
+const cloudinary = require('cloudinary');
+const getDataUri = require('../utils/DataUri');
 
 //register user
 const registerController = async (req, res) => {
@@ -43,6 +44,18 @@ const registerController = async (req, res) => {
       phone,
       answer,
     });
+    const file = getDataUri(req.file);
+    //delete previous image
+    // await cloudinary.v2.uploader.destroy(user.profilePic.public_id);
+
+    const cdb = await cloudinary.v2.uploader.upload(file.content);
+
+    user.profilePic = {
+      public_id: cdb.public_id,
+      url: cdb.secure_url
+    }
+
+    await user.save();
     res.status(201).send({
       success: true,
       message: "Registeration Success, please login",
@@ -229,6 +242,49 @@ const updatePasswordController = async (req, res) => {
   }
 }
 
+//update user Profile
+const updateProfilePicture = async (req, res) => {
+  try {
+
+    const user = await userModel.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "USer Not Found",
+      });
+    }
+
+    const file = getDataUri(req.file);
+    //delete previous image
+    await cloudinary.v2.uploader.destroy(user.profilePic.public_id);
+
+    const cdb = await cloudinary.v2.uploader.upload(file.content);
+
+    user.profilePic = {
+      public_id: cdb.public_id,
+      url: cdb.secure_url
+    }
+
+    await user.save();
+
+
+    res.status(200).send({
+      success: true,
+      messgae: "profile picture updated ",
+      user,
+    })
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error In Update User Profile API",
+      error,
+    });
+  }
+}
+
 
 
 
@@ -236,5 +292,6 @@ const updatePasswordController = async (req, res) => {
 
 
 module.exports = {
-  registerController, loginController, getUserProfile, logoutController, updateUserController, updatePasswordController
+  registerController, loginController, getUserProfile, logoutController, updateUserController,
+  updatePasswordController, updateProfilePicture
 };

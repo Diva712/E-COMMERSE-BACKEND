@@ -37,9 +37,11 @@ const userSchema = new mongoose.Schema(
     profilePic: {
       public_id: {
         type: String,
+        required: [true, "profile picture required"]
       },
       url: {
         type: String,
+        required: [true, "profile picture required"]
       },
     },
     answer: {
