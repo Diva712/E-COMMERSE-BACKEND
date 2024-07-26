@@ -114,7 +114,6 @@ const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, description, price, stock, category } = req.body;
-
     const updatedProduct = await ProductModel.findByIdAndUpdate(
       id,
       { name, description, price, stock, category },
@@ -149,5 +148,64 @@ const updateProduct = async (req, res) => {
   }
 };
 
+const updateProductImage = async (req, res) => {
+  try {
+    const product = await ProductModel.findById(req.params.id);
+    if (!product) {
+      return res.status(404).send({
+        success: false,
+        message: "Procduct not found !!"
+      })
+    }
 
-module.exports = { getAllProduct, getSingleProduct, creareProduct, updateProduct };
+    if (!req.file) {
+      return res.status(404).send({
+        success: false,
+        message: "Product image not found !!",
+      })
+    }
+
+    const file = getDataUri(req.file);
+    //delete previous image
+    //await cloudinary.v2.uploader.destroy(product.images.public_id);
+
+    const cdb = await cloudinary.v2.uploader.upload(file.content);
+
+    const image = {
+      public_id: cdb.public_id,
+      url: cdb.secure_url
+    }
+
+    product.images.push(image)
+    await product.save();
+
+    res.status(200).send({
+      success: true,
+      message: "Product image updated "
+    })
+
+
+  } catch (error) {
+    console.error(error);
+    if (error.name === "CastError") {
+      return res.status(400).send({
+        success: false,
+        message: "Invalid product ID",
+      });
+    }
+    res.status(500).send({
+      success: false,
+      message: 'Error in update product API',
+      error: error.message,
+    });
+  }
+}
+
+
+module.exports = {
+  getAllProduct,
+  getSingleProduct,
+  creareProduct,
+  updateProduct,
+  updateProductImage
+};
