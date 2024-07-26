@@ -8,6 +8,7 @@ const cloudinary = require('cloudinary');
 
 const userRoutes = require('./routers/UserRoutes');
 const productRoutes = require('./routers/ProductRoutes');
+const categoryRoutes = require('./routers/CategoryRoutes');
 // Load environment variables from .env file
 dotenv.config();
 
@@ -33,7 +34,7 @@ app.use(cookieParser());
 // Routes
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/products', productRoutes);
-
+app.use('/api/v1/categories', categoryRoutes);
 
 // Start server
 const PORT = process.env.PORT || 3000;
