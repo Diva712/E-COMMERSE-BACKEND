@@ -190,7 +190,44 @@ const updateUserController = async (req, res) => {
   }
 }
 
-//
+//update password
+const updatePasswordController = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user._id);
+    const { oldPassword, newPassword } = req.body;
+    //valdiation
+    if (!oldPassword || !newPassword) {
+      return res.status(500).send({
+        success: false,
+        message: "Please provide old or new password",
+      });
+    }
+    // old pass check
+    const isMatch = await user.comparePassword(oldPassword);
+    //validaytion
+    if (!isMatch) {
+      return res.status(500).send({
+        success: false,
+        message: "Invalid Old Password",
+      });
+    }
+    user.password = newPassword;
+    await user.save();
+    res.status(200).send({
+      success: true,
+      message: "Password Updated Successfully",
+    });
+
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error In LOgout API",
+      error,
+    });
+  }
+}
 
 
 
@@ -198,4 +235,6 @@ const updateUserController = async (req, res) => {
 
 
 
-module.exports = { registerController, loginController, getUserProfile, logoutController, updateUserController };
+module.exports = {
+  registerController, loginController, getUserProfile, logoutController, updateUserController, updatePasswordController
+};
