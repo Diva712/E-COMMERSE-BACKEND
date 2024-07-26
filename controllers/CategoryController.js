@@ -26,4 +26,27 @@ const createCategory = async (req, res) => {
   }
 }
 
-module.exports = { createCategory };
+
+const getAllCategory = async (req, res) => {
+  try {
+    const categories = await categoryModel.find({});
+    res.status(200).send({
+      success: true,
+      message: "Categories Fetch Successfully",
+      totalCat: categories.length,
+      categories,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error In Get All Cat API",
+    });
+  }
+}
+
+module.exports = {
+  createCategory,
+  getAllCategory
+
+};
