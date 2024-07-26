@@ -202,7 +202,7 @@ const updateProductImage = async (req, res) => {
   }
 }
 
-
+//delete image product
 const deleteProductImage = async (req, res) => {
   try {
 
@@ -259,11 +259,51 @@ const deleteProductImage = async (req, res) => {
 }
 
 
+//delete product
+const deleteProduct = async (req, res) => {
+  try {
+
+    const product = await ProductModel.findById(req.params.id);
+    if (!product) {
+      return res.status(404).send({
+        success: false,
+        message: "Product not found !",
+      })
+    }
+
+    for (let index = 0; index < product.images.length; index++) {
+      await cloudinary.v2.uploader.destroy(product.images[index].public_id)
+    }
+
+    await product.deleteOne();
+    res.status(200).send({
+      success: true,
+      message: "Product deleted successfully!!"
+    })
+
+  } catch (error) {
+    console.error(error);
+    if (error.name === "CastError") {
+      return res.status(400).send({
+        success: false,
+        message: "Invalid product ID",
+      });
+    }
+    res.status(500).send({
+      success: false,
+      message: 'Error in update product API',
+      error: error.message,
+    });
+  }
+}
+
+
 module.exports = {
   getAllProduct,
   getSingleProduct,
   creareProduct,
   updateProduct,
   updateProductImage,
-  deleteProductImage
+  deleteProductImage,
+  deleteProduct
 };
