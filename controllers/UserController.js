@@ -323,11 +323,61 @@ const passwordReset = async (req, res) => {
 }
 
 
+//create a controller for admin get All User based on role
+const getAllUser = async (req, res) => {
+  try {
+    const users = await userModel.find({ role: "user" });
+    res.status(200).send({
+      success: true,
+      totalUsers: users.length,
+      message: "All Users Fetched Successfully",
+      users,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Error in Get All Users API",
+      error,
+    });
+  }
+}
+
+
+//delete user by admin
+const deleteUser = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Delete user profile picture from Cloudinary
+    await cloudinary.v2.uploader.destroy(user.profilePic.public_id);
+
+    // Delete user from the database
+    await userModel.findByIdAndDelete(req.params.id);
+
+    res.status(200).send({
+      success: true,
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Error in Delete User API",
+      error,
+    });
+  }
+}
 
 
 
 module.exports = {
-  registerController, passwordReset,
+  registerController, passwordReset, deleteUser,
   loginController, getUserProfile, logoutController, updateUserController,
-  updatePasswordController, updateProfilePicture
+  updatePasswordController, updateProfilePicture, getAllUser
 };
