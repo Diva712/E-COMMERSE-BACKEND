@@ -1,5 +1,5 @@
 const express = require('express');
-const { createOrder, myOrder, getSingleOrder, razorPayKey, razorPayCapturingPayment, getAllOrdersController } = require('../controllers/OrderController');
+const { createOrder, myOrder, getSingleOrder, razorPayKey, razorPayCapturingPayment, getAllOrdersController, changeOrderStatusController } = require('../controllers/OrderController');
 const router = express.Router();
 const { isAuthenticated, isAdmin } = require('../middleware/AuthMiddleware');
 
@@ -18,5 +18,5 @@ router.route('/razorpay-payment').post(razorPayCapturingPayment);
 
 
 router.route('/getAllOrders').get(isAuthenticated, isAdmin, getAllOrdersController);
-
+router.route('/change-order-status/:id').put(isAuthenticated, isAdmin, changeOrderStatusController);
 module.exports = router;
