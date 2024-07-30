@@ -1,6 +1,7 @@
 const orderModel = require('../models/OrderModel');
 const productModel = require('../models/ProductModel'); // Assuming this is your product model
 
+//create order
 const createOrder = async (req, res) => {
   try {
     const {
@@ -50,5 +51,35 @@ const createOrder = async (req, res) => {
   }
 };
 
+//get my order
+const myOrder = async (req, res) => {
+  try {
+    // find orders
+    const orders = await orderModel.find({ user: req.user._id });
+    //valdiation
+    if (!orders) {
+      return res.status(404).send({
+        success: false,
+        message: "no orders found",
+      });
+    }
+    res.status(200).send({
+      success: true,
+      message: "your orders data",
+      totalOrder: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error In My orders Order API",
+      error,
+    });
+  }
+};
 
-module.exports = { createOrder };
+
+
+
+module.exports = { createOrder, myOrder };

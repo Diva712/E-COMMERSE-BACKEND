@@ -4,37 +4,40 @@ const getDataUri = require('../utils/DataUri');
 
 //register user
 const registerController = async (req, res) => {
-
   try {
-    const { name, email, password, address, city, country, phone, answer } =
-      req.body;
-    // validation
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !city ||
-      !address ||
-      !country ||
-      !phone ||
-      !answer
-    ) {
-      return res.status(500).send({
+    const { name, email, password, address, city, country, phone, answer } = req.body;
+
+    // Validation
+    if (!name || !email || !password || !city || !address || !country || !phone || !answer) {
+      return res.status(400).send({
         success: false,
         message: "Please Provide All Fields",
       });
     }
 
-    //check exisiting user
-    const exisitingUSer = await userModel.findOne({ email });
-    //validation
-    if (exisitingUSer) {
-      return res.status(500).send({
+    // Check existing user
+    const existingUser = await userModel.findOne({ email });
+    if (existingUser) {
+      return res.status(400).send({
         success: false,
-        message: "email already taken",
+        message: "Email already taken",
       });
     }
-    const user = await userModel.create({
+
+    // Check if file is provided
+    if (!req.file) {
+      return res.status(400).send({
+        success: false,
+        message: "Profile picture is required",
+      });
+    }
+
+    // Upload profile picture to Cloudinary
+    const file = getDataUri(req.file);
+    const cdb = await cloudinary.v2.uploader.upload(file.content);
+
+    // Create new user
+    const user = new userModel({
       name,
       email,
       password,
@@ -43,33 +46,28 @@ const registerController = async (req, res) => {
       country,
       phone,
       answer,
+      profilePic: {
+        public_id: cdb.public_id,
+        url: cdb.secure_url
+      }
     });
-    const file = getDataUri(req.file);
-    //delete previous image
-    // await cloudinary.v2.uploader.destroy(user.profilePic.public_id);
 
-    const cdb = await cloudinary.v2.uploader.upload(file.content);
-
-    user.profilePic = {
-      public_id: cdb.public_id,
-      url: cdb.secure_url
-    }
-
+    // Save user
     await user.save();
+
     res.status(201).send({
       success: true,
-      message: "Registeration Success, please login",
+      message: "Registration Success, please login",
       user,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send({
       success: false,
       message: "Error In Register API",
       error,
     });
   }
-
 }
 
 //login user
