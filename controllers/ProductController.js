@@ -4,10 +4,19 @@ const getDataUri = require('../utils/DataUri');
 
 //get all product
 const getAllProduct = async (req, res) => {
+  const { keyword } = req.query;
+
   try {
-    const products = await ProductModel.find({});
+    const products = await ProductModel.find({
+      name: {
+        $regex: keyword ? keyword : "",
+        $options: "i",
+      },
+      // category: category ? category : null,
+    });
     res.status(200).send({
       success: true,
+      totalProducts: products.length,
       message: "all products fetched succesfully!!",
       products,
     })
@@ -20,7 +29,6 @@ const getAllProduct = async (req, res) => {
     })
   }
 }
-
 
 //get single product
 const getSingleProduct = async (req, res) => {
@@ -360,5 +368,6 @@ module.exports = {
   updateProductImage,
   deleteProductImage,
   deleteProduct,
+
   productReviewController
 };

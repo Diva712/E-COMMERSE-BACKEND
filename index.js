@@ -5,7 +5,8 @@ const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const { connectDB } = require('./config/db');
 const cloudinary = require('cloudinary');
-
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize')
 const userRoutes = require('./routers/UserRoutes');
 const productRoutes = require('./routers/ProductRoutes');
 const categoryRoutes = require('./routers/CategoryRoutes');
@@ -26,6 +27,8 @@ cloudinary.v2.config({
 
 
 // Middleware
+app.use(helmet());
+app.use(mongoSanitize());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
