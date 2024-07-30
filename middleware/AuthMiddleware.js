@@ -19,7 +19,7 @@ const isAuthenticated = async (req, res, next) => {
     const token = authHeader.split(' ')[1];
 
     // Validate the token
-    const decodeData = jwt.verify(token, process.env.JWT_SECRET);
+    const decodeData = JWT.verify(token, process.env.JWT_SECRET);
     req.user = await userModel.findById(decodeData._id);
 
     if (!req.user) {
