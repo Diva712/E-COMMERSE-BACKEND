@@ -80,6 +80,41 @@ const myOrder = async (req, res) => {
 };
 
 
+//get Single Order details
+const getSingleOrder = async (req, res) => {
+  try {
+    // find orders
+    const order = await orderModel.findById(req.params.id);
+    //valdiation
+    if (!order) {
+      return res.status(404).send({
+        success: false,
+        message: "no order found",
+      });
+    }
+    res.status(200).send({
+      success: true,
+      message: "your order fetched",
+      order,
+    });
+  } catch (error) {
+    console.log(error);
+    // cast error ||  OBJECT ID
+    if (error.name === "CastError") {
+      return res.status(500).send({
+        success: false,
+        message: "Invalid Id",
+      });
+    }
+    res.status(500).send({
+      success: false,
+      message: "Error In Get UPDATE Products API",
+      error,
+    });
+  }
+}
 
 
-module.exports = { createOrder, myOrder };
+
+
+module.exports = { createOrder, myOrder, getSingleOrder };
