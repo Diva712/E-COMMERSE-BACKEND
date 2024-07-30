@@ -1,6 +1,7 @@
 const JWT = require('jsonwebtoken');
 const userModel = require('../models/UserModel');
 
+//user auth
 const isAuthenticated = async (req, res, next) => {
   const { token } = req.cookies;
   //valdiation
@@ -15,6 +16,17 @@ const isAuthenticated = async (req, res, next) => {
   next();
 };
 
+//user admin
+const isAdmin = async (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    return res.status(401).send({
+      success: false,
+      message: "admin only",
+    })
+  }
+  next();
+}
 
-module.exports = { isAuthenticated };
+
+module.exports = { isAuthenticated, isAdmin };
 

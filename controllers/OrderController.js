@@ -163,6 +163,30 @@ const razorPayCapturingPayment = async (req, res) => {
 };
 
 
+//admin controller
+const getAllOrdersController = async (req, res) => {
+  try {
+    const orders = await orderModel.find({});
+    res.status(200).send({
+      success: true,
+      message: "All Orders Data",
+      totalOrders: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error In Get UPDATE Products API",
+      error,
+    });
+  }
+};
 
 
-module.exports = { createOrder, myOrder, getSingleOrder, razorPayKey, razorPayCapturingPayment };
+
+
+
+
+
+module.exports = { createOrder, myOrder, getSingleOrder, razorPayKey, razorPayCapturingPayment, getAllOrdersController };
