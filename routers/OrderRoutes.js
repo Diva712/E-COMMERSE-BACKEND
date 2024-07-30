@@ -14,7 +14,7 @@ router.route('/my-orders/:id').get(isAuthenticated, getSingleOrder);
 
 //Payment routes
 router.route('/razorpay-key').get(isAuthenticated, razorPayKey);
-router.route('/razorpay-payment').post(razorPayCapturingPayment);
+router.route('/razorpay-payment').post(isAuthenticated, razorPayCapturingPayment);
 
 
 router.route('/getAllOrders').get(isAuthenticated, isAdmin, getAllOrdersController);
