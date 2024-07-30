@@ -49,15 +49,15 @@ const productSchema = new mongoose.Schema({
       url: String,
     },
   ],
-  // reviews: [reviewSchema],
-  // rating: {
-  //   type: Number,
-  //   default: 0,
-  // },
-  // numReviews: {
-  //   type: Number,
-  //   default: 0,
-  // },
+  reviews: [reviewSchema],
+  rating: {
+    type: Number,
+    default: 0,
+  },
+  numReviews: {
+    type: Number,
+    default: 0,
+  },
 
 
 }, { timestamps: true })
